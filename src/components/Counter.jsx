@@ -4,30 +4,39 @@ import Todos from './Todos';
 import {v4 as uuidv4} from 'uuid'
 
 const toDoInitialState = {
-   todos: [ {id:1, text: 'Do the laundry'},
-    {id:2 , text: 'Do the homework'},
-    {id:3, text: 'Create a Node application from scratch due to Monday'}
-]
-};
+    todos:[]
+}
+
 
 export const ToDosContext = React.createContext();
 
 function ToDoreducer(state,action) {
-    switch(action.type){  
-            case 'delete':
-            const filterToDos = state.todos.filter(todo => todo.id !== action.payload.id)
-            return {...state, todos: filterToDos}
-            case 'add':
-            const newTodo = {id: uuidv4(), text: action.payload};
-            const addingToDos = [...state.todos, newTodo]
-            return {...state, todos: addingToDos}; 
+    switch (action.type) {
+      case "get":
+        return { ...state, todos: action.payload };
+      case "delete":
+        const filterToDos = state.todos.filter(
+          (todo) => todo.id !== action.payload.id
+        );
+        return { ...state, todos: filterToDos };
+      case "add":
+        
+        const addingToDos = [...state.todos, action.payload];
+        return { ...state, todos: addingToDos };
+      case "edit":
+        const updatedToDo = { ...action.payload };
+        const updatedToDoIndex = state.todos.findIndex(
+          (t) => t.id === action.payload.id
+        );
+        const updatedToDos = [
+          ...state.todos.slice(0, updatedToDoIndex),
+          updatedToDo,
+          ...state.todos.slice(updatedToDoIndex + 1),
+        ];
+        return { ...state, todos: updatedToDos };
 
-            
-            default:
-            
-            return toDoInitialState;
-
-            
+      default:
+        return toDoInitialState;
     }
 }
 
